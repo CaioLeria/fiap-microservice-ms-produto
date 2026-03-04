@@ -2,6 +2,7 @@ package com.github.cidarosa.ms.produto.service;
 
 import com.github.cidarosa.ms.produto.dto.ProdutoDTO;
 import com.github.cidarosa.ms.produto.entities.Produto;
+import com.github.cidarosa.ms.produto.exceptions.ResourceNotFoundException;
 import com.github.cidarosa.ms.produto.repositories.ProdutoRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -28,7 +29,7 @@ public class ProdutoService {
     @Transactional
     public ProdutoDTO findProdutoById(Long id){
         Produto produto = produtoRepository.findById(id).orElseThrow(
-                ()-> new EntityNotFoundException("Recurso não encontrado .ID:" + id)
+                ()-> new ResourceNotFoundException("Recurso não encontrado .ID:" + id)
         );
         return new ProdutoDTO(produto);
     }
@@ -53,13 +54,13 @@ public class ProdutoService {
            produto = produtoRepository.save(produto);
            return new ProdutoDTO(produto);
         } catch (EntityNotFoundException e){
-            throw new EntityNotFoundException("Recurso não encontrado. ID: " + id);
+            throw new ResourceNotFoundException("Recurso não encontrado. ID: " + id);
         }
     }
     @Transactional
     public void deleteProduto(Long id){
         if(!produtoRepository.existsById(id)){
-            throw new EntityNotFoundException("Recurso não encontrado. ID: " + id);
+            throw new ResourceNotFoundException("Recurso não encontrado. ID: " + id);
         }
         produtoRepository.deleteById(id);
     }
