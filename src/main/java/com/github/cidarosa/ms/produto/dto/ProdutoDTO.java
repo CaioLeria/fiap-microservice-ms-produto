@@ -27,11 +27,15 @@ private String descricao;
 @Positive(message = "O valor deve ser positivo")
 private Double valor;
 
+@NotNull(message = "Adicione uma categoria válida")
+private CategoriaDTO categoria;
+
     public ProdutoDTO(Produto produto) {
         this.id = produto.getId();
         this.nome = produto.getNome();
         this.descricao = produto.getDescricao();
         this.valor = produto.getValor();
+        this.categoria = new CategoriaDTO(produto.getCategoria());
     }
 }
 

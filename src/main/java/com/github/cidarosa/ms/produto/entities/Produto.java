@@ -19,4 +19,7 @@ public class Produto {
     private String descricao;
     private Double valor;
 
+    @ManyToOne
+    @JoinColumn(name = "categoria_id", nullable = false)
+    private Categoria categoria;
 }

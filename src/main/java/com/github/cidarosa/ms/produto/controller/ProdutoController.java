@@ -20,11 +20,11 @@ public class ProdutoController {
 @Autowired
     private ProdutoService produtoService;
 
-@Profile("test")
-@GetMapping("/--demo/500")
-public String force500(){
-    throw new RuntimeException("Erro 500 forçado");
-}
+//@Profile("test")
+//@GetMapping("/--demo/500")
+//public String force500(){
+   // throw new RuntimeException("Erro 500 forçado");
+//}
 @GetMapping
     public ResponseEntity<List<ProdutoDTO>> getAllProdutos(){
     List<ProdutoDTO> list =  produtoService.findAllProdutos();
