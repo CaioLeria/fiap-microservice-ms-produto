@@ -4,11 +4,14 @@ import com.github.cidarosa.ms.produto.dto.CategoriaDTO;
 import com.github.cidarosa.ms.produto.dto.ProdutoDTO;
 import com.github.cidarosa.ms.produto.entities.Categoria;
 import com.github.cidarosa.ms.produto.entities.Produto;
+import com.github.cidarosa.ms.produto.exceptions.DatabaseException;
 import com.github.cidarosa.ms.produto.exceptions.ResourceNotFoundException;
 import com.github.cidarosa.ms.produto.repositories.CategoriaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -38,7 +41,7 @@ public class CategoriaService {
     public CategoriaDTO saveCategoria (CategoriaDTO categoriaDTO){
         Categoria categoria = new Categoria();
 
-        copyDtoToCategoria(categoriaDTO,categoria);
+        copyDtoToCategoria(categoriaDTO, categoria);
         categoria = categoriaRepository.save(categoria);
         return new CategoriaDTO(categoria);
     }
@@ -52,6 +55,20 @@ public class CategoriaService {
             return new CategoriaDTO(categoria);
         } catch (EntityNotFoundException e){
                 throw new EntityNotFoundException("Não existe a categoria: "+id);
+        }
+    }
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void deleteCategoriaById(Long id) {
+
+        if (!categoriaRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Recurso não encontrado. ID: " + id);
+        }
+
+        try {
+            categoriaRepository.deleteById(id);
+        } catch (
+                DataIntegrityViolationException e) {
+            throw new DatabaseException("Não foi possível excluir Categoria. Existem podutos associados a ela");
         }
     }
 }
