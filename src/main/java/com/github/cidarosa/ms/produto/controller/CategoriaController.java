@@ -1,6 +1,8 @@
 package com.github.cidarosa.ms.produto.controller;
 
 import com.github.cidarosa.ms.produto.dto.CategoriaDTO;
+import com.github.cidarosa.ms.produto.dto.CategoriaRequestDTO;
+import com.github.cidarosa.ms.produto.dto.CategoriaResponseDTO;
 import com.github.cidarosa.ms.produto.service.CategoriaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +33,9 @@ public class CategoriaController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoriaDTO> createCategoria(@RequestBody @Valid CategoriaDTO categoriaDto) {
+    public ResponseEntity<CategoriaResponseDTO> createCategoria(@RequestBody @Valid CategoriaRequestDTO inputDto) {
 
-        categoriaDto = categoriaService.saveCategoria(categoriaDto);
+        CategoriaResponseDTO categoriaDto = categoriaService.saveCategoria(inputDto);
 
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
@@ -45,9 +47,9 @@ public class CategoriaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoriaDTO> updateCategoria(@PathVariable Long id, @RequestBody @Valid CategoriaDTO categoriaDto) {
+    public ResponseEntity<CategoriaResponseDTO> updateCategoria(@PathVariable Long id, @RequestBody @Valid CategoriaRequestDTO inputDTO) {
 
-        categoriaDto = categoriaService.updateCategoria(id, categoriaDto);
+       CategoriaResponseDTO categoriaDto = categoriaService.updateCategoria(id, inputDTO);
 
         return ResponseEntity.ok(categoriaDto);
     }

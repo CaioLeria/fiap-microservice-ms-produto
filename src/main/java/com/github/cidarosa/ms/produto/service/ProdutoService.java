@@ -1,6 +1,8 @@
 package com.github.cidarosa.ms.produto.service;
 
 import com.github.cidarosa.ms.produto.dto.ProdutoDTO;
+import com.github.cidarosa.ms.produto.dto.ProdutoRequestDTO;
+import com.github.cidarosa.ms.produto.dto.ProdutoResponseDTO;
 import com.github.cidarosa.ms.produto.entities.Categoria;
 import com.github.cidarosa.ms.produto.entities.Produto;
 import com.github.cidarosa.ms.produto.exceptions.DatabaseException;
@@ -40,37 +42,31 @@ public class ProdutoService {
         return new ProdutoDTO(produto);
     }
     @Transactional
-    public ProdutoDTO saveProduto (ProdutoDTO produtoDTO){
-        try {
+    public ProdutoResponseDTO saveProduto (ProdutoRequestDTO produtoDTO){
             Produto produto = new Produto();
 
             copyDtoToProduct(produtoDTO,produto);
             produto = produtoRepository.save(produto);
-            return new ProdutoDTO(produto);
-        } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException("Não foi possivel cadastrar produto, categoria não existe id: "+ produtoDTO.getCategoria().getId());
-        }
+            return new ProdutoResponseDTO(produto);
     }
-    private void copyDtoToProduct (ProdutoDTO produtoDTO, Produto produto){
-        produto.setNome(produtoDTO.getNome());
-        produto.setDescricao(produtoDTO.getDescricao());
-        produto.setValor(produtoDTO.getValor());
+    private void copyDtoToProduct (ProdutoRequestDTO requestDTO, Produto produto){
+        produto.setNome(requestDTO.getNome());
+        produto.setDescricao(requestDTO.getDescricao());
+        produto.setValor(requestDTO.getValor());
 
-        Categoria categoria = categoriaRepository
-                .getReferenceById(produtoDTO.getCategoria().getId());
+        Categoria categoria = categoriaRepository.findById(requestDTO.getCategoriaId()).orElseThrow(
+                () -> new DatabaseException("Não foi possivel salvar Produto. Categoria inexistente ID: " + requestDTO.getCategoriaId()+")")
+        );
 
         produto.setCategoria(categoria);
     }
     @Transactional
-    public ProdutoDTO updateProduto(Long id, ProdutoDTO produtoDTO){
-        try{
+    public ProdutoResponseDTO updateProduto(Long id, ProdutoRequestDTO requestDTO){
+
            Produto produto = produtoRepository.getReferenceById(id);
-           copyDtoToProduct(produtoDTO, produto);
+           copyDtoToProduct(requestDTO, produto);
            produto = produtoRepository.save(produto);
-           return new ProdutoDTO(produto);
-        } catch (EntityNotFoundException e){
-            throw new ResourceNotFoundException("Recurso não encontrado. ID: " + id);
-        }
+           return new ProdutoResponseDTO(produto);
     }
     @Transactional
     public void deleteProduto(Long id){

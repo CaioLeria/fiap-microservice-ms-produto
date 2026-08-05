@@ -1,6 +1,8 @@
 package com.github.cidarosa.ms.produto.service;
 
 import com.github.cidarosa.ms.produto.dto.CategoriaDTO;
+import com.github.cidarosa.ms.produto.dto.CategoriaRequestDTO;
+import com.github.cidarosa.ms.produto.dto.CategoriaResponseDTO;
 import com.github.cidarosa.ms.produto.dto.ProdutoDTO;
 import com.github.cidarosa.ms.produto.entities.Categoria;
 import com.github.cidarosa.ms.produto.entities.Produto;
@@ -25,8 +27,7 @@ public class CategoriaService {
     public List<CategoriaDTO> findAllCategorias(){
         return categoriaRepository.findAll().stream().map(CategoriaDTO::new).toList();
     }
-    private void copyDtoToCategoria(CategoriaDTO categoriaDTO, Categoria categoria){
-        categoria.setId(categoriaDTO.getId());
+    private void copyDtoToCategoria(CategoriaRequestDTO categoriaDTO, Categoria categoria){
         categoria.setName(categoriaDTO.getNome());
     }
     @Transactional(readOnly = true)
@@ -38,21 +39,21 @@ public class CategoriaService {
         return new CategoriaDTO(categoria);
     }
     @Transactional
-    public CategoriaDTO saveCategoria (CategoriaDTO categoriaDTO){
+    public CategoriaResponseDTO saveCategoria (CategoriaRequestDTO categoriaDTO){
         Categoria categoria = new Categoria();
 
         copyDtoToCategoria(categoriaDTO, categoria);
         categoria = categoriaRepository.save(categoria);
-        return new CategoriaDTO(categoria);
+        return new CategoriaResponseDTO(categoria);
     }
 
     @Transactional
-    public CategoriaDTO updateCategoria(Long id, CategoriaDTO inputDto){
+    public CategoriaResponseDTO updateCategoria(Long id, CategoriaRequestDTO inputDto){
         try{
             Categoria categoria = categoriaRepository.getReferenceById(id);
             copyDtoToCategoria(inputDto, categoria);
             categoria = categoriaRepository.save(categoria);
-            return new CategoriaDTO(categoria);
+            return new CategoriaResponseDTO(categoria);
         } catch (EntityNotFoundException e){
                 throw new EntityNotFoundException("Não existe a categoria: "+id);
         }

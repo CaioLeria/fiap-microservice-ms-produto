@@ -1,6 +1,8 @@
 package com.github.cidarosa.ms.produto.controller;
 
 import com.github.cidarosa.ms.produto.dto.ProdutoDTO;
+import com.github.cidarosa.ms.produto.dto.ProdutoRequestDTO;
+import com.github.cidarosa.ms.produto.dto.ProdutoResponseDTO;
 import com.github.cidarosa.ms.produto.service.ProdutoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +39,8 @@ public class ProdutoController {
     return ResponseEntity.ok(produtoDTO);
 }
 @PostMapping
-    public ResponseEntity<ProdutoDTO> createProduto(@RequestBody @Valid ProdutoDTO produtoDTO){
-    produtoDTO = produtoService.saveProduto(produtoDTO);
+    public ResponseEntity<ProdutoResponseDTO> createProduto(@RequestBody @Valid ProdutoRequestDTO requestDTO){
+    ProdutoResponseDTO produtoDTO = produtoService.saveProduto(requestDTO);
     URI uri = ServletUriComponentsBuilder
             .fromCurrentRequestUri()
             .path("/{id}")
@@ -47,8 +49,8 @@ public class ProdutoController {
     return ResponseEntity.created(uri).body(produtoDTO);
 }
 @PutMapping("/{id}")
-    public ResponseEntity<ProdutoDTO> updateProduto(@PathVariable Long id, @RequestBody @Valid  ProdutoDTO produtoDTO){
-    produtoDTO = produtoService.updateProduto(id, produtoDTO);
+    public ResponseEntity<ProdutoResponseDTO> updateProduto(@PathVariable Long id, @RequestBody @Valid  ProdutoRequestDTO requestDTO){
+    ProdutoResponseDTO produtoDTO = produtoService.updateProduto(id, requestDTO);
     return ResponseEntity.ok(produtoDTO);
 }
 @DeleteMapping("/{id}")
